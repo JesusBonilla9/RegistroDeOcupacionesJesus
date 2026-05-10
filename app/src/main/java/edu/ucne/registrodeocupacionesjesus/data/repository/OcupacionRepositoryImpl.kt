@@ -22,9 +22,9 @@ class OcupacionRepositoryImpl @Inject constructor(
         return localDataSource.getById(id)?.toDomain()
     }
 
-    override suspend fun upsert(Ocupacion: Ocupacion): Int {
-        localDataSource.upsert(Ocupacion.toEntity())
-        return Ocupacion.ocupacionId ?: 0
+    override suspend fun upsert(ocupacion: Ocupacion): Int {
+        localDataSource.upsert(ocupacion.toEntity())
+        return ocupacion.ocupacionId ?: 0
     }
 
     override suspend fun delete(id: Int) {
