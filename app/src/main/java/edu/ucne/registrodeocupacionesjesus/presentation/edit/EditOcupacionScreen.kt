@@ -100,6 +100,7 @@ fun EditOcupacionScreen(
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary
+
                     )
                 } else {
                     Text("Guardar")

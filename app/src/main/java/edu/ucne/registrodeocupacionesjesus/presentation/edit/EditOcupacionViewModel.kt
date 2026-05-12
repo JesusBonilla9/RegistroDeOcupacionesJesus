@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.registrodeocupacionesjesus.domain.model.Ocupacion
 import edu.ucne.registrodeocupacionesjesus.domain.usecase.DeleteOcupacionUseCase
 import edu.ucne.registrodeocupacionesjesus.domain.usecase.GetOcupacionUseCase
+import edu.ucne.registrodeocupacionesjesus.domain.usecase.ObserveOcupacionesUseCase
 import edu.ucne.registrodeocupacionesjesus.domain.usecase.UpsertOcupacionUseCase
 import edu.ucne.registrodeocupacionesjesus.domain.usecase.validateDescription
 import edu.ucne.registrodeocupacionesjesus.domain.usecase.validateSueldo
@@ -18,16 +19,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import edu.ucne.registrodeocupacionesjesus.presentation.navigation.Screen
+import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class EditOcupacionViewModel @Inject constructor(
     private val getOcupacionUseCase: GetOcupacionUseCase,
     private val upsertOcupacionUseCase: UpsertOcupacionUseCase,
     private val deleteOcupacionUseCase: DeleteOcupacionUseCase,
+    private val observeOcupacionesUseCase: ObserveOcupacionesUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
     private val routeArgs = savedStateHandle.toRoute<Screen.OcupacionEdit>()
     private val ocupacionId: Int = routeArgs.ocupacionId
+
     private val _state = MutableStateFlow(EditOcupacionUiState())
     val state: StateFlow<EditOcupacionUiState> = _state.asStateFlow()
 
@@ -73,42 +78,46 @@ class EditOcupacionViewModel @Inject constructor(
     }
 
     private fun onSave() {
-        val descripcion = state.value.descripcion
-
-        val descripcionValidation = validateDescription(descripcion, emptyList())
-        val sueldoValidation = validateSueldo(state.value.sueldo)
-
-        if (!descripcionValidation.isValid || !sueldoValidation.isValid) {
-            _state.update {
-                it.copy(
-                    descripcionError = descripcionValidation.error,
-                    sueldoError = sueldoValidation.error
-                )
-            }
-            return
-        }
-
         viewModelScope.launch {
-            _state.update { it.copy(isSaving = true) }
+            val descripcion = state.value.descripcion
+            val sueldo = state.value.sueldo
 
-            val ocupacion = Ocupacion(
-                ocupacionId = state.value.ocupacionId ?: 0,
-                descripcion = descripcion,
-                sueldo = state.value.sueldo.toDouble()
-            )
+            val descripcionesExistentes = observeOcupacionesUseCase().first()
+                .filter { it.ocupacionId != state.value.ocupacionId }
+                .map { it.descripcion }
 
-            val result = upsertOcupacionUseCase(ocupacion)
-            result.onSuccess { newId ->
+            val descripcionValidation = validateDescription(descripcion, descripcionesExistentes)
+            val sueldoValidation = validateSueldo(sueldo)
+
+            if (!descripcionValidation.isValid || !sueldoValidation.isValid) {
                 _state.update {
                     it.copy(
-                        isSaving = false,
-                        saved = true,
-                        ocupacionId = newId,
-                        isNew = false
+                        descripcionError = descripcionValidation.error,
+                        sueldoError = sueldoValidation.error
                     )
                 }
-            }.onFailure {
-                _state.update { it.copy(isSaving = false) }
+            } else {
+                _state.update { it.copy(isSaving = true) }
+
+                val ocupacion = Ocupacion(
+                    ocupacionId = state.value.ocupacionId ?: 0,
+                    descripcion = descripcion,
+                    sueldo = sueldo.toDoubleOrNull() ?: 0.0
+                )
+
+                val result = upsertOcupacionUseCase(ocupacion)
+                result.onSuccess { newId ->
+                    _state.update {
+                        it.copy(
+                            isSaving = false,
+                            saved = true,
+                            ocupacionId = newId,
+                            isNew = false
+                        )
+                    }
+                }.onFailure {
+                    _state.update { it.copy(isSaving = false) }
+                }
             }
         }
     }
