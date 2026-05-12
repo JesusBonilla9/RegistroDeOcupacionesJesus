@@ -40,9 +40,23 @@ import androidx.compose.foundation.lazy.items
 @Composable
 fun OcupacionListScreen(
     viewModel: OcupacionListViewModel = hiltViewModel(),
-    onAddOcupacion: () -> Unit
+    onAddOcupacion: () -> Unit,
+    onNavigateToEdit: (Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.navigateToCreate) {
+        if (state.navigateToCreate) {
+            onAddOcupacion()
+        }
+    }
+
+    LaunchedEffect(state.navigateToEditId) {
+        state.navigateToEditId?.let { id ->
+            onNavigateToEdit(id)
+        }
+    }
+
     OcupacionListBody(state, viewModel::onEvent, onAddOcupacion)
 }
 
@@ -55,14 +69,15 @@ fun OcupacionListBody(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect (state.message) {
+    LaunchedEffect(state.message) {
         state.message?.let { message ->
             snackbarHostState.showSnackbar(message)
             onEvent(OcupacionListUiEvent.ClearMessage)
         }
     }
 
-    Scaffold (
+
+    Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
@@ -71,7 +86,7 @@ fun OcupacionListBody(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Agregar Ocupacion"
+                    contentDescription = "Agregar ocupacion"
                 )
             }
         }
@@ -90,7 +105,7 @@ fun OcupacionListBody(
             } else {
                 if (state.ocupaciones.isEmpty()) {
                     Text(
-                        text = "No hay ocupaciones",
+                        text = "No hay ocupaciones registradas",
                         modifier = Modifier
                             .align(Alignment.Center)
                             .testTag("empty_message"),
@@ -105,11 +120,14 @@ fun OcupacionListBody(
                         items(
                             items = state.ocupaciones,
                             key = { it.ocupacionId }
-                        ) { ocupacion->
+                        ) { ocupacion ->
                             OcupacionItem(
                                 ocupacion = ocupacion,
                                 onDelete = {
                                     onEvent(OcupacionListUiEvent.Delete(ocupacion.ocupacionId))
+                                },
+                                onClick = {
+                                    onEvent(OcupacionListUiEvent.Edit(ocupacion.ocupacionId))
                                 }
                             )
                         }
@@ -120,15 +138,18 @@ fun OcupacionListBody(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OcupacionItem(
     ocupacion: Ocupacion,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onClick: () -> Unit
 ) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("ocupacion_item_${ocupacion.ocupacionId}")
+            .testTag("ocupacion_item_${ocupacion.ocupacionId}"),
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier
@@ -145,7 +166,7 @@ fun OcupacionItem(
                 )
 
                 Text(
-                    text = "RD$${ocupacion.sueldo}",
+                    text = "Sueldo: RD$${ocupacion.sueldo}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -161,20 +182,5 @@ fun OcupacionItem(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun OcupacionListBodyPreview() {
-    MaterialTheme {
-        val state = OcupacionListUiState(
-            isLoading = false,
-            ocupaciones = listOf(
-                Ocupacion(ocupacionId = 1, descripcion = "Ingeniero en sistemas", sueldo = 40000.0),
-                Ocupacion(ocupacionId = 2, descripcion = "Doctor", sueldo = 60000.0)
-            )
-        )
-        OcupacionListBody(state, {}, {})
     }
 }
