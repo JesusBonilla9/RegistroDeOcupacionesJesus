@@ -3,8 +3,9 @@ package edu.ucne.registrodeocupacionesjesus.domain.usecase
 import edu.ucne.registrodeocupacionesjesus.domain.model.Ocupacion
 import edu.ucne.registrodeocupacionesjesus.domain.repository.OcupacionRepository
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
-class UpsertOcupacionUseCase(
+class UpsertOcupacionUseCase @Inject constructor(
     private val repository: OcupacionRepository
 ) {
     suspend operator fun invoke(ocupacion: Ocupacion): Result<Int> {
