@@ -33,24 +33,22 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 @Composable
 fun EditOcupacionScreen(
     viewModel: EditOcupacionViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
-)
-{
+    onBack: () -> Unit
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.saved) {
-        if(state.saved)
-        {
-            onNavigateBack()
+        if (state.saved) {
+            onBack()
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (state.isNew) "Nueva Ocupacion" else "Editar Ocupacion") },
+                title = { Text(if(state.isNew) "Nueva Ocupacion" else "Editar Ocupacion") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Atras")
                     }
                 }
@@ -64,16 +62,15 @@ fun EditOcupacionScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
             OutlinedTextField(
                 value = state.descripcion,
                 onValueChange = { viewModel.onEvent(EditOcupacionUiEvent.DescriptionChanged(it)) },
-                label = { Text("Descripción") },
+                label = { Text("Descripcion") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .testTag("input_descripcion"),
+                    .testTag("input_description"),
                 isError = state.descripcionError != null,
-                supportingText = state.descripcionError?.let { errorMsg -> { Text(errorMsg) } },
+                supportingText = state.descripcionError?.let { { Text(it) } },
                 singleLine = false,
                 minLines = 3,
                 maxLines = 5
@@ -82,12 +79,12 @@ fun EditOcupacionScreen(
             OutlinedTextField(
                 value = state.sueldo,
                 onValueChange = { viewModel.onEvent(EditOcupacionUiEvent.SueldoChanged(it)) },
-                label = { Text("Sueldo") },
+                label = { Text("Sueldo (en pesos dominicanos)") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("input_sueldo"),
                 isError = state.sueldoError != null,
-                supportingText = state.sueldoError?.let { errorMsg -> { Text(errorMsg) } },
+                supportingText = state.sueldoError?.let { { Text(it) } },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true
             )
@@ -102,8 +99,7 @@ fun EditOcupacionScreen(
                 if (state.isSaving) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
                     Text("Guardar")
