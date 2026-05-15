@@ -1,4 +1,4 @@
-package edu.ucne.registrodeocupacionesjesus.data.local
+package edu.ucne.registrodeocupacionesjesus.data.ocupaciones.local
 
 import androidx.room.Dao
 import androidx.room.Delete

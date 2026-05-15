@@ -1,4 +1,4 @@
-package edu.ucne.registrodeocupacionesjesus.domain.model
+package edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.model
 
 data class Ocupacion(
     val ocupacionId: Int = 0,

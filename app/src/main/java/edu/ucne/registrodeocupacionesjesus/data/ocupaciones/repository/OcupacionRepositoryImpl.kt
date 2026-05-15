@@ -1,10 +1,10 @@
-package edu.ucne.registrodeocupacionesjesus.data.repository
+package edu.ucne.registrodeocupacionesjesus.data.ocupaciones.repository
 
-import edu.ucne.registrodeocupacionesjesus.data.local.OcupacionDao
-import edu.ucne.registrodeocupacionesjesus.data.mapper.toDomain
-import edu.ucne.registrodeocupacionesjesus.data.mapper.toEntity
-import edu.ucne.registrodeocupacionesjesus.domain.model.Ocupacion
-import edu.ucne.registrodeocupacionesjesus.domain.repository.OcupacionRepository
+import edu.ucne.registrodeocupacionesjesus.data.ocupaciones.local.OcupacionDao
+import edu.ucne.registrodeocupacionesjesus.data.ocupaciones.mapper.toDomain
+import edu.ucne.registrodeocupacionesjesus.data.ocupaciones.mapper.toEntity
+import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.model.Ocupacion
+import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.repository.OcupacionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

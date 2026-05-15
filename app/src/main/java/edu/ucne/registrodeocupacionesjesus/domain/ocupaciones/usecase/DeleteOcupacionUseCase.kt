@@ -1,6 +1,6 @@
-package edu.ucne.registrodeocupacionesjesus.domain.usecase
+package edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.usecase
 
-import edu.ucne.registrodeocupacionesjesus.domain.repository.OcupacionRepository
+import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.repository.OcupacionRepository
 import javax.inject.Inject
 
 class DeleteOcupacionUseCase @Inject constructor(

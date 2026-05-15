@@ -1,4 +1,4 @@
-package edu.ucne.registrodeocupacionesjesus.domain.usecase
+package edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.usecase
 
 
 data class OcupacionValidation(
