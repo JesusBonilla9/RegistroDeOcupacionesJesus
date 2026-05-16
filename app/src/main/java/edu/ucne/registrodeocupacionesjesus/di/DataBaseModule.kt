@@ -21,7 +21,10 @@ object DataBaseModule {
     fun provideOcupacionDatabase(
         @ApplicationContext context: Context
     ): RegistroDb {
-        return Room.databaseBuilder(context, RegistroDb :: class.java, "registro_db").build()
+        return Room.databaseBuilder(context, RegistroDb :: class.java, "registro_db")
+            .fallbackToDestructiveMigration()
+            .build()
+
 
     }
     @Provides
