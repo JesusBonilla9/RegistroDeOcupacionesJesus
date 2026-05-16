@@ -1,6 +1,9 @@
 package edu.ucne.registrodeocupacionesjesus.presentation.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,12 +12,14 @@ import edu.ucne.registrodeocupacionesjesus.presentation.edit.EditOcupacionScreen
 import edu.ucne.registrodeocupacionesjesus.presentation.list.OcupacionListScreen
 
 @Composable
-fun OcupacionNavHost(
-    navController: NavHostController = rememberNavController()
+fun MainNavigationHost(
+    navController: NavHostController = rememberNavController(),
+    innerPadding: PaddingValues
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.OcupacionList
+        startDestination = Screen.OcupacionList,
+        modifier = Modifier.padding(innerPadding)
     ) {
         composable<Screen.OcupacionList> {
             OcupacionListScreen(
