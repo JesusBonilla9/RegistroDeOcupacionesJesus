@@ -36,7 +36,7 @@ class OcupacionRepositoryImplTest{
     }
 
     @Test
-    fun `upsert guarda la ocupacion correctamente`() = runTest {
+    fun upsert_guardaLaOcupacionCorrectamente() = runTest {
         val ocupacion = Ocupacion(
             ocupacionId = 0,
             descripcion = "Ingeniero en Sistemas",
@@ -54,7 +54,7 @@ class OcupacionRepositoryImplTest{
     }
 
     @Test
-    fun `upsert actualiza la ocupacion correctamente`() = runTest {
+    fun upsert_actualizaLaOcupacionCorrectamente() = runTest {
         val ocupacion = Ocupacion(ocupacionId = 1, descripcion = "Ocupacion actualizada", sueldo = 30000.0)
         coEvery { dao.upsert(any()) } just Runs
 
@@ -64,7 +64,7 @@ class OcupacionRepositoryImplTest{
         coVerify { dao.upsert(any()) }
     }
     @Test
-    fun `delete elimina la ocupacion correctamente`() = runTest{
+    fun delete_eliminaLaOcupacionCorrectamente() = runTest{
         val ocupacionId = 1
         coEvery { dao.deleteById(ocupacionId) } just Runs
 
@@ -72,7 +72,7 @@ class OcupacionRepositoryImplTest{
         coVerify { dao.deleteById(ocupacionId) }
     }
     @Test
-    fun `observeTasks retorna flow de tareas`() = runTest{
+    fun observeOcupaciones_retornaFlowDeTareas() = runTest{
         val entities = listOf(
             OcupacionEntity(1, "Doctor", 82000.0),
             OcupacionEntity(2, "Arquitecto", 70000.0)
@@ -85,7 +85,7 @@ class OcupacionRepositoryImplTest{
         assertEquals("Arquitecto", result[1].descripcion)
     }
     @Test
-    fun `getTask retorna ocupacion por id`() = runTest {
+    fun getOcupacion_retornaOcupacionPorId() = runTest {
         val entity = OcupacionEntity(1, "Enfermera", 10000.0)
         coEvery { dao.getById(1) } returns entity
 
