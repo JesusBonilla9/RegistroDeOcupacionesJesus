@@ -1,4 +1,4 @@
-package edu.ucne.registrodeocupacionesjesus.presentation.list
+package edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

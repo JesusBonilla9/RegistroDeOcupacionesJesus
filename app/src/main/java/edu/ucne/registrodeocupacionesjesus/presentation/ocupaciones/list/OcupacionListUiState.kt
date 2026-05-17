@@ -1,4 +1,4 @@
-package edu.ucne.registrodeocupacionesjesus.presentation.list
+package edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.list
 
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.model.Ocupacion
 

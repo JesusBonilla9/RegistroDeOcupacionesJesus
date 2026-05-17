@@ -1,4 +1,4 @@
-package edu.ucne.registrodeocupacionesjesus.presentation.edit
+package edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.edit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +28,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.edit.EditOcupacionUiEvent
+import edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.edit.EditOcupacionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

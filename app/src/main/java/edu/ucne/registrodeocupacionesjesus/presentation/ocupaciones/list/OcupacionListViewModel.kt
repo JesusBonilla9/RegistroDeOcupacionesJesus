@@ -1,4 +1,4 @@
-package edu.ucne.registrodeocupacionesjesus.presentation.list
+package edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
