@@ -47,17 +47,17 @@ class EmpleadoRepositoryImplTest {
             sexo = "Masculino",
             sueldo = 50000.0
         )
-        val taskSlot = slot<EmpleadoEntity>()
-        coEvery { dao.upsert(capture(taskSlot)) } just Runs
+        val empleadoSlot = slot<EmpleadoEntity>()
+        coEvery { dao.upsert(capture(empleadoSlot)) } just Runs
 
         val result = repository.upsert(empleado)
 
         assertEquals(0, result)
         coVerify { dao.upsert(any()) }
-        assertEquals(empleado.nombres, taskSlot.captured.nombres)
-        assertEquals(empleado.sueldo, taskSlot.captured.sueldo, 0.0)
-        assertEquals(empleado.sexo, taskSlot.captured.sexo)
-        assertEquals(empleado.fechaIngreso, taskSlot.captured.fechaIngreso)
+        assertEquals(empleado.nombres, empleadoSlot.captured.nombres)
+        assertEquals(empleado.sueldo, empleadoSlot.captured.sueldo, 0.0)
+        assertEquals(empleado.sexo, empleadoSlot.captured.sexo)
+        assertEquals(empleado.fechaIngreso, empleadoSlot.captured.fechaIngreso)
     }
 
     @Test

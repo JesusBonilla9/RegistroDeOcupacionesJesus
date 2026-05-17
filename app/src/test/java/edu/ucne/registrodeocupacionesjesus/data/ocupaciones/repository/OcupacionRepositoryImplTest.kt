@@ -42,15 +42,15 @@ class OcupacionRepositoryImplTest{
             descripcion = "Ingeniero en Sistemas",
             sueldo = 50000.0
         )
-        val taskSlot = slot<OcupacionEntity>()
-        coEvery { dao.upsert(capture(taskSlot)) } just Runs
+        val ocupacionSlot = slot<OcupacionEntity>()
+        coEvery { dao.upsert(capture(ocupacionSlot)) } just Runs
 
         val result = repository.upsert(ocupacion)
 
         assertEquals(0, result)
         coVerify { dao.upsert(any()) }
-        assertEquals(ocupacion.descripcion, taskSlot.captured.descripcion)
-        assertEquals(ocupacion.sueldo, taskSlot.captured.sueldo)
+        assertEquals(ocupacion.descripcion, ocupacionSlot.captured.descripcion)
+        assertEquals(ocupacion.sueldo, ocupacionSlot.captured.sueldo)
     }
 
     @Test
