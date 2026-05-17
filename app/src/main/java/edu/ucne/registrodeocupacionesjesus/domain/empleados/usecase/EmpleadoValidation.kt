@@ -11,7 +11,7 @@ fun validateNombres(nombres: String): EmpleadoValidation {
     return when {
         nombres.isBlank() -> EmpleadoValidation(false, "El nombre no puede estar vacio")
         nombres.trim().length < 3 -> EmpleadoValidation(false, "El nombre debe tener al menos 3 letras")
-        !nombres.all {it.isLetter()} -> EmpleadoValidation(false, "El nombre solo debe contener letras")
+        !nombres.all {it.isLetter() || it.isWhitespace()} -> EmpleadoValidation(false, "El nombre solo debe contener letras")
         else -> EmpleadoValidation(true)
     }
 }
