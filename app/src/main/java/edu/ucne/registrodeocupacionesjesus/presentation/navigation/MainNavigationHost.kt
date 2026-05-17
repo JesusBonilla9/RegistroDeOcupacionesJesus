@@ -8,8 +8,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import edu.ucne.registrodeocupacionesjesus.presentation.edit.EditOcupacionScreen
-import edu.ucne.registrodeocupacionesjesus.presentation.list.OcupacionListScreen
+import edu.ucne.registrodeocupacionesjesus.domain.empleados.model.Empleado
+import edu.ucne.registrodeocupacionesjesus.presentation.empleados.edit.EditEmpleadoScreen
+import edu.ucne.registrodeocupacionesjesus.presentation.empleados.list.EmpleadoListScreen
+import edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.edit.EditOcupacionScreen
+import edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.list.OcupacionListScreen
 
 @Composable
 fun MainNavigationHost(
@@ -37,6 +40,28 @@ fun MainNavigationHost(
                 onBack = {
                     navController.navigate(Screen.OcupacionList) {
                         popUpTo(Screen.OcupacionList) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+        composable<Screen.EmpleadoList> {
+            EmpleadoListScreen(
+                onAddEmpleado = {
+                    navController.navigate(Screen.EmpleadoEdit(0))
+                },
+                onNavigateToEdit = { id ->
+                    navController.navigate(Screen.EmpleadoEdit(id))
+                }
+            )
+        }
+
+        composable<Screen.EmpleadoEdit> {
+            EditEmpleadoScreen(
+                onBack = {
+                    navController.navigate(Screen.EmpleadoList) {
+                        popUpTo(Screen.EmpleadoList) {
                             inclusive = true
                         }
                     }

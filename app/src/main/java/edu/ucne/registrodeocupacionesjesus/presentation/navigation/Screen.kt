@@ -13,7 +13,7 @@ sealed class Screen {
     data object EmpleadoList : Screen()
 
     @Serializable
-    data class EmpleadoEdit(val ocupacionId : Int = 0) : Screen()
+    data class EmpleadoEdit(val empleadoId : Int = 0) : Screen()
 }
 
 
