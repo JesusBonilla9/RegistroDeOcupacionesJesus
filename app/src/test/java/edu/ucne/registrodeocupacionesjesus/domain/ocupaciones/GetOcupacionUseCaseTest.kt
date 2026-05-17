@@ -27,7 +27,7 @@ class GetOcupacionUseCaseTest {
     @Test
     fun invoke_llamaAlRepositorioYRetornaLaOcupacionCorrespondienteAlId() = runTest {
         val ocupacionId = 1
-        val ocupacionEsperada = Ocupacion(ocupacionId = ocupacionId, descripcion = "Médico", sueldo = 80000.0)
+        val ocupacionEsperada = Ocupacion(ocupacionId = ocupacionId, descripcion = "Medico", sueldo = 80000.0)
 
         coEvery { repository.getOcupacion(ocupacionId) } returns ocupacionEsperada
 

@@ -29,7 +29,7 @@ class ObserveOcupacionesUseCaseTest {
     fun invoke_llamaAlRepositorioYRetornaUnFlujoConLaListaDeOcupaciones() = runTest {
         val listaEsperada = listOf(
             Ocupacion(ocupacionId = 1, descripcion = "Desarrollador", sueldo = 50000.0),
-            Ocupacion(ocupacionId = 2, descripcion = "Médico", sueldo = 80000.0)
+            Ocupacion(ocupacionId = 2, descripcion = "Medico", sueldo = 80000.0)
         )
         coEvery { repository.observeOcupaciones() } returns flowOf(listaEsperada)
 
