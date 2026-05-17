@@ -72,7 +72,7 @@ class OcupacionRepositoryImplTest{
         coVerify { dao.deleteById(ocupacionId) }
     }
     @Test
-    fun observeOcupaciones_retornaFlowDeTareas() = runTest{
+    fun observeOcupaciones_retornaFlowDeOcupaciones() = runTest{
         val entities = listOf(
             OcupacionEntity(1, "Doctor", 82000.0),
             OcupacionEntity(2, "Arquitecto", 70000.0)
