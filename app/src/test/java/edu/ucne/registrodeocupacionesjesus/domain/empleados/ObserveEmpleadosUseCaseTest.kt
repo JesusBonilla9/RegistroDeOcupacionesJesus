@@ -29,7 +29,6 @@ class ObserveEmpleadosUseCaseTest {
 
     @Test
     fun invoke_llamaAlRepositorioYRetornaUnFlujoConLaListaDeEmpleados() = runTest {
-        // Given
         val listaEsperada = listOf(
             Empleado(
                 empleadoId = 1,
@@ -48,24 +47,19 @@ class ObserveEmpleadosUseCaseTest {
         )
         coEvery { repository.observeEmpleados() } returns flowOf(listaEsperada)
 
-        // When
         val result = useCase().first()
 
-        // Then
         assertEquals(listaEsperada, result)
         coVerify(exactly = 1) { repository.observeEmpleados() }
     }
 
     @Test
     fun invoke_retornaUnFlujoConUnaListaVaciaCuandoNoHayRegistros() = runTest {
-        // Given
         val listaVacia = emptyList<Empleado>()
         coEvery { repository.observeEmpleados() } returns flowOf(listaVacia)
 
-        // When
         val result = useCase().first()
 
-        // Then
         assertEquals(listaVacia, result)
         coVerify(exactly = 1) { repository.observeEmpleados() }
     }
