@@ -4,8 +4,10 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import edu.ucne.registrodeocupacionesjesus.data.repository.OcupacionRepositoryImpl
-import edu.ucne.registrodeocupacionesjesus.domain.repository.OcupacionRepository
+import edu.ucne.registrodeocupacionesjesus.data.empleados.repository.EmpleadoRepositoryImpl
+import edu.ucne.registrodeocupacionesjesus.data.ocupaciones.repository.OcupacionRepositoryImpl
+import edu.ucne.registrodeocupacionesjesus.domain.empleados.repository.EmpleadoRepository
+import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.repository.OcupacionRepository
 import javax.inject.Singleton
 
 @Module
@@ -16,4 +18,11 @@ abstract class RepositoryModule{
     abstract fun bindOcupacionRepository(
         impl: OcupacionRepositoryImpl
     ): OcupacionRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindEmpleadoRepository(
+        impl: EmpleadoRepositoryImpl
+    ): EmpleadoRepository
 }
+
