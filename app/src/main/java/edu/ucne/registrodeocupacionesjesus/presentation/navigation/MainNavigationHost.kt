@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import edu.ucne.registrodeocupacionesjesus.domain.empleados.model.Empleado
 import edu.ucne.registrodeocupacionesjesus.presentation.empleados.edit.EditEmpleadoScreen
 import edu.ucne.registrodeocupacionesjesus.presentation.empleados.list.EmpleadoListScreen
 import edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.edit.EditOcupacionScreen
