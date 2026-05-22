@@ -14,4 +14,13 @@ class Converters {
     fun dateToString(date: LocalDate?): String?{
         return date?.toString()
     }
+    @TypeConverter
+    fun fromFrecuenciaPago(value: FrecuenciaPago): String{
+        return value.descripcion
+    }
+    @TypeConverter
+    fun toFrecuenciaPago(value: String): FrecuenciaPago {
+        return FrecuenciaPago.valueOf(value)
+    }
+
 }
