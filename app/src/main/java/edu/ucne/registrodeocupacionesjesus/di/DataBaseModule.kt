@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import edu.ucne.registrodeocupacionesjesus.data.database.RegistroDb
 import edu.ucne.registrodeocupacionesjesus.data.empleados.local.EmpleadoDao
+import edu.ucne.registrodeocupacionesjesus.data.horasExtra.local.HoraExtraDao
 import edu.ucne.registrodeocupacionesjesus.data.ocupaciones.local.OcupacionDao
 import edu.ucne.registrodeocupacionesjesus.domain.empleados.model.Empleado
 import javax.inject.Singleton
@@ -37,5 +38,11 @@ object DataBaseModule {
     @Singleton
     fun provideEmpleadoDao(database: RegistroDb): EmpleadoDao {
         return database.EmpleadoDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideHoraExtra(database: RegistroDb): HoraExtraDao {
+        return database.HoraExtraDao()
     }
 }
