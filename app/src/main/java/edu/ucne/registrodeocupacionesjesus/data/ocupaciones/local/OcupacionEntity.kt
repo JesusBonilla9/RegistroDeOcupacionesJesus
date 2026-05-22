@@ -8,6 +8,6 @@ data class OcupacionEntity(
     @PrimaryKey(autoGenerate = true)
     val ocupacionId : Int = 0,
     val descripcion : String = "",
-    val esPuestoDireccion: Boolean
+    val esPuestoDireccion: Boolean = false
 )
 
