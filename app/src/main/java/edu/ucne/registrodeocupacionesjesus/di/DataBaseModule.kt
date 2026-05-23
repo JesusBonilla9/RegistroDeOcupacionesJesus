@@ -42,7 +42,7 @@ object DataBaseModule {
 
     @Provides
     @Singleton
-    fun provideHoraExtra(database: RegistroDb): HoraExtraDao {
+    fun provideHoraExtraDao(database: RegistroDb): HoraExtraDao {
         return database.HoraExtraDao()
     }
 }

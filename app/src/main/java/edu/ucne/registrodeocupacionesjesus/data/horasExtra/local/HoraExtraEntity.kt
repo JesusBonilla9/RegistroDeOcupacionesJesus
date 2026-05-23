@@ -11,7 +11,7 @@ data class HoraExtraEntity(
     val empleadoId: Int = 0,
     val fecha: LocalDate = LocalDate.now(),
     val cantidadHoras : Int = 0,
-    val tipoHoraExtra: TipoHoraExtra = TipoHoraExtra.DIURNO,
+    val tipoHoraExtra: TipoHoraExtra = TipoHoraExtra.DIURNA,
     val recargo: Double = 0.0,
     val esPuestoDireccion: Boolean = false
 )
