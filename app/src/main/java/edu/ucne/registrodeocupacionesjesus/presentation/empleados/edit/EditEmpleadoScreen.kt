@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
@@ -39,6 +42,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.ucne.registrodeocupacionesjesus.data.empleados.local.FrecuenciaPago
 import java.time.Instant
 import java.time.ZoneId
 
@@ -56,8 +60,11 @@ fun EditEmpleadoScreen(
     var expandedSexo by remember { mutableStateOf(false) }
     val opcionesSexo = listOf("Masculino", "Femenino")
 
-    LaunchedEffect(state.saved) {
-        if (state.saved) {
+    var expandedOcupacion by remember { mutableStateOf(false) }
+    var expandedFrecuencia by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.saved, state.deleted) {
+        if (state.saved || state.deleted) {
             onBack()
         }
     }
@@ -70,6 +77,20 @@ fun EditEmpleadoScreen(
                     IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Atras")
                     }
+                },
+                actions = {
+                    if (!state.isNew) {
+                        IconButton(
+                            onClick = { viewModel.onEvent(EditEmpleadoUiEvent.Delete) },
+                            modifier = Modifier.testTag("btn_delete")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Eliminar Empleado",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
                 }
             )
         }
@@ -78,21 +99,60 @@ fun EditEmpleadoScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
                 value = state.nombres,
                 onValueChange = { viewModel.onEvent(EditEmpleadoUiEvent.NombresChanged(it)) },
                 label = { Text("Nombres") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("input_nombres"),
+                modifier = Modifier.fillMaxWidth().testTag("input_nombres"),
                 isError = state.nombresError != null,
                 supportingText = state.nombresError?.let { { Text(it) } },
                 singleLine = true
             )
 
+            // DROPDOWN OCUPACION
+            ExposedDropdownMenuBox(
+                expanded = expandedOcupacion,
+                onExpandedChange = { expandedOcupacion = it }
+            ) {
+                val ocupacionSeleccionada = state.ocupaciones.find { it.ocupacionId == state.ocupacionId }?.descripcion ?: ""
+                OutlinedTextField(
+                    value = ocupacionSeleccionada,
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text("Ocupación") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedOcupacion) },
+                    modifier = Modifier.fillMaxWidth().menuAnchor().testTag("input_ocupacion"),
+                    isError = state.ocupacionError != null,
+                    supportingText = state.ocupacionError?.let { { Text(it) } }
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedOcupacion,
+                    onDismissRequest = { expandedOcupacion = false }
+                ) {
+                    if (state.ocupaciones.isEmpty()) {
+                        DropdownMenuItem(
+                            text = { Text("Primero debes crear ocupaciones") },
+                            onClick = { expandedOcupacion = false }
+                        )
+                    } else {
+                        state.ocupaciones.forEach { ocupacion ->
+                            DropdownMenuItem(
+                                text = { Text(ocupacion.descripcion) },
+                                onClick = {
+                                    viewModel.onEvent(EditEmpleadoUiEvent.OcupacionChanged(ocupacion.ocupacionId))
+                                    expandedOcupacion = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // DROPDOWN SEXO
             ExposedDropdownMenuBox(
                 expanded = expandedSexo,
                 onExpandedChange = { expandedSexo = it }
@@ -102,17 +162,11 @@ fun EditEmpleadoScreen(
                     onValueChange = { },
                     readOnly = true,
                     label = { Text("Sexo") },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSexo)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor()
-                        .testTag("input_sexo"),
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSexo) },
+                    modifier = Modifier.fillMaxWidth().menuAnchor().testTag("input_sexo"),
                     isError = state.sexoError != null,
                     supportingText = state.sexoError?.let { { Text(it) } }
                 )
-
                 ExposedDropdownMenu(
                     expanded = expandedSexo,
                     onDismissRequest = { expandedSexo = false }
@@ -133,16 +187,11 @@ fun EditEmpleadoScreen(
                 value = state.fechaIngreso.toString(),
                 onValueChange = { },
                 label = { Text("Fecha de Ingreso") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("input_fecha"),
+                modifier = Modifier.fillMaxWidth().testTag("input_fecha"),
                 readOnly = true,
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Seleccionar fecha"
-                        )
+                        Icon(imageVector = Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
                     }
                 },
                 isError = state.fechaIngresoError != null,
@@ -156,20 +205,14 @@ fun EditEmpleadoScreen(
                     confirmButton = {
                         TextButton(onClick = {
                             datePickerState.selectedDateMillis?.let { millis ->
-                                val date = Instant.ofEpochMilli(millis)
-                                    .atZone(ZoneId.of("UTC"))
-                                    .toLocalDate()
+                                val date = Instant.ofEpochMilli(millis).atZone(ZoneId.of("UTC")).toLocalDate()
                                 viewModel.onEvent(EditEmpleadoUiEvent.FechaIngresoChanged(date))
                             }
                             showDatePicker = false
-                        }) {
-                            Text("Aceptar")
-                        }
+                        }) { Text("Aceptar") }
                     },
                     dismissButton = {
-                        TextButton(onClick = { showDatePicker = false }) {
-                            Text("Cancelar")
-                        }
+                        TextButton(onClick = { showDatePicker = false }) { Text("Cancelar") }
                     }
                 ) {
                     DatePicker(state = datePickerState)
@@ -180,27 +223,51 @@ fun EditEmpleadoScreen(
                 value = state.sueldo,
                 onValueChange = { viewModel.onEvent(EditEmpleadoUiEvent.SueldoChanged(it)) },
                 label = { Text("Sueldo (en pesos dominicanos)") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("input_sueldo"),
+                modifier = Modifier.fillMaxWidth().testTag("input_sueldo"),
                 isError = state.sueldoError != null,
                 supportingText = state.sueldoError?.let { { Text(it) } },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true
             )
 
+            // DROPDOWN FRECUENCIA PAGO
+            ExposedDropdownMenuBox(
+                expanded = expandedFrecuencia,
+                onExpandedChange = { expandedFrecuencia = it }
+            ) {
+                OutlinedTextField(
+                    value = state.frecuenciaPago.descripcion,
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text("Frecuencia de Pago") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedFrecuencia) },
+                    modifier = Modifier.fillMaxWidth().menuAnchor().testTag("input_frecuencia"),
+                    isError = state.frecuenciaPagoError != null,
+                    supportingText = state.frecuenciaPagoError?.let { { Text(it) } }
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedFrecuencia,
+                    onDismissRequest = { expandedFrecuencia = false }
+                ) {
+                    FrecuenciaPago.entries.forEach { frecuencia ->
+                        DropdownMenuItem(
+                            text = { Text(frecuencia.descripcion) },
+                            onClick = {
+                                viewModel.onEvent(EditEmpleadoUiEvent.FrecuenciaPagoChanged(frecuencia))
+                                expandedFrecuencia = false
+                            }
+                        )
+                    }
+                }
+            }
+
             Button(
                 onClick = { viewModel.onEvent(EditEmpleadoUiEvent.Save) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("btn_save"),
+                modifier = Modifier.fillMaxWidth().testTag("btn_save"),
                 enabled = !state.isSaving
             ) {
                 if (state.isSaving) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
                 } else {
                     Text("Guardar")
                 }
