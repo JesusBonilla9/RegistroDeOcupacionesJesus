@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface OcupacionDao {
     @Upsert
-    suspend fun upsert(entity: OcupacionEntity)
+    suspend fun upsert(entity: OcupacionEntity): Long
 
     @Delete
     suspend fun delete(entity: OcupacionEntity)

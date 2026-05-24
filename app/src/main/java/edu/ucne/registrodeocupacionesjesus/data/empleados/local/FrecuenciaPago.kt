@@ -2,7 +2,7 @@ package edu.ucne.registrodeocupacionesjesus.data.empleados.local
 
 enum class FrecuenciaPago(
     val descripcion: String,
-    val dias : Double
+    val divisor : Double
 ) {
     SEMANAL("SEMANAL", 5.5),
     QUINCENAL(descripcion = "QUINCENAL",11.91),

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface HoraExtraDao {
     @Upsert
-    suspend fun upsert(entity: HoraExtraEntity)
+    suspend fun upsert(entity: HoraExtraEntity): Long
 
     @Delete
     suspend fun delete(entity: HoraExtraEntity)

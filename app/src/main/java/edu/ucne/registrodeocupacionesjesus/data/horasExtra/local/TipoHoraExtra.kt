@@ -2,7 +2,7 @@ package edu.ucne.registrodeocupacionesjesus.data.horasExtra.local
 
 enum class TipoHoraExtra(
     val descripcion : String,
-    val porcentajeRecargo : Double
+    val factor : Double
 ) {
     DIURNA("DIURNA", 1.35),
     NOCTURNA("NOCTURNA", 1.5),
