@@ -9,7 +9,9 @@ class UpsertOcupacionUseCase @Inject constructor(
     private val repository: OcupacionRepository
 ) {
     suspend operator fun invoke(ocupacion: Ocupacion): Result<Int> {
-       val listaActual = repository.observeOcupaciones().first().map{it.descripcion}
+        val listaActual = repository.observeOcupaciones().first()
+            .filter { it.ocupacionId != ocupacion.ocupacionId }
+            .map { it.descripcion }
        val descriptionResult = validateDescription(ocupacion.descripcion, listaActual)
        if(!descriptionResult.isValid) {
            return Result.failure(IllegalArgumentException(descriptionResult.error))

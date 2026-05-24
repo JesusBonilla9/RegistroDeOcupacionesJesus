@@ -35,11 +35,27 @@ fun validateFecha(fecha: LocalDate): EmpleadoValidation {
 }
 
 fun validateSexo(sexo: String): EmpleadoValidation {
-    return if (sexo.isBlank()) {
-        EmpleadoValidation(false, "Debe seleccionar el sexo del empleado")
-    } else {
-        EmpleadoValidation(true)
+    return when {
+        sexo.isBlank() -> EmpleadoValidation(false, "Debe seleccionar el sexo del empleado")
+        else -> EmpleadoValidation(true)
     }
 }
+
+fun validateOcupacionId(ocupacionId: Int): EmpleadoValidation {
+    return when {
+        ocupacionId <= 0 -> EmpleadoValidation(false, "Debe seleccionar una ocupaciónId")
+        else -> EmpleadoValidation(true)
+    }
+}
+
+fun validateFrecuenciaPago(frecuencia: String): EmpleadoValidation {
+    return when {
+        frecuencia.isBlank() -> EmpleadoValidation(false, "Debe seleccionar una frecuencia de pago")
+        else -> EmpleadoValidation(true)
+    }
+}
+
+
+
 
 
