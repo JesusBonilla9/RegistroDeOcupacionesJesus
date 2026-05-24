@@ -4,17 +4,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -22,19 +23,15 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.model.Ocupacion
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.runtime.getValue
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.foundation.lazy.items
 
 @Composable
 fun OcupacionListScreen(
@@ -75,7 +72,6 @@ fun OcupacionListBody(
         }
     }
 
-
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
@@ -85,7 +81,7 @@ fun OcupacionListBody(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Agregar ocupacion"
+                    contentDescription = "Agregar ocupación"
                 )
             }
         }
@@ -122,9 +118,6 @@ fun OcupacionListBody(
                         ) { ocupacion ->
                             OcupacionItem(
                                 ocupacion = ocupacion,
-                                onDelete = {
-                                    onEvent(OcupacionListUiEvent.Delete(ocupacion.ocupacionId))
-                                },
                                 onClick = {
                                     onEvent(OcupacionListUiEvent.Edit(ocupacion.ocupacionId))
                                 }
@@ -141,7 +134,6 @@ fun OcupacionListBody(
 @Composable
 fun OcupacionItem(
     ocupacion: Ocupacion,
-    onDelete: () -> Unit,
     onClick: () -> Unit
 ) {
     ElevatedCard(
@@ -150,34 +142,28 @@ fun OcupacionItem(
             .testTag("ocupacion_item_${ocupacion.ocupacionId}"),
         onClick = onClick
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = ocupacion.descripcion,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+            Text(
+                text = ocupacion.descripcion,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
 
-                Text(
-                    text = "Sueldo: RD$${ocupacion.sueldo}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+            Text(
+                text = "Sueldo: RD$${ocupacion.sueldo}",
+                style = MaterialTheme.typography.bodyMedium
+            )
 
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier.testTag("btn_delete_${ocupacion.ocupacionId}")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar ocupacion"
+            if (ocupacion.esPuestoDireccion) {
+                Text(
+                    text = "Puesto de Dirección (No aplica horas extra)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
         }
