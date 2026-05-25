@@ -116,7 +116,6 @@ fun EditOcupacionScreen(
                 singleLine = true
             )
 
-            // INTERRUPTOR PARA PUESTO DE DIRECCIÓN
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
