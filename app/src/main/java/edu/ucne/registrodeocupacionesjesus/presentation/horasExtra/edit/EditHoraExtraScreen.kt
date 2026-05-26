@@ -96,7 +96,6 @@ fun EditHoraExtraScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            // DROPDOWN EMPLEADO
             ExposedDropdownMenuBox(
                 expanded = expandedEmpleado,
                 onExpandedChange = { expandedEmpleado = it }
@@ -132,7 +131,6 @@ fun EditHoraExtraScreen(
                 }
             }
 
-            // DATE PICKER
             OutlinedTextField(
                 value = state.fecha.toString(),
                 onValueChange = { },
@@ -166,7 +164,6 @@ fun EditHoraExtraScreen(
                 }
             }
 
-            // CANTIDAD DE HORAS
             OutlinedTextField(
                 value = state.cantidadHoras,
                 onValueChange = { viewModel.onEvent(EditHoraExtraUiEvent.CantidadHorasChanged(it)) },
@@ -177,7 +174,6 @@ fun EditHoraExtraScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
-            // TIPO HORA EXTRA
             ExposedDropdownMenuBox(
                 expanded = expandedTipo,
                 onExpandedChange = { expandedTipo = it }
@@ -206,7 +202,6 @@ fun EditHoraExtraScreen(
                 }
             }
 
-            // TARJETA DE RESULTADO CALCULADO
             ElevatedCard(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(text = "Total a pagar (Calculado)", style = MaterialTheme.typography.labelMedium)
