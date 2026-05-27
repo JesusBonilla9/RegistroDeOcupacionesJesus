@@ -18,6 +18,7 @@ data class EditHoraExtraUiState(
     val empleadoError: String? = null,
     val fechaError: String? = null,
     val cantidadHorasError: String? = null,
+    val tipoHoraExtraError: String? = null,
     val isSaving: Boolean = false,
     val isDeleting: Boolean = false,
     val isNew: Boolean = true,

@@ -167,7 +167,7 @@ fun EditHoraExtraScreen(
             OutlinedTextField(
                 value = state.cantidadHoras,
                 onValueChange = { viewModel.onEvent(EditHoraExtraUiEvent.CantidadHorasChanged(it)) },
-                label = { Text("Cantidad de Horas") },
+                label = { Text("Cantidad de Horas extra") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = state.cantidadHorasError != null,
                 supportingText = state.cantidadHorasError?.let { { Text(it) } },
@@ -184,7 +184,9 @@ fun EditHoraExtraScreen(
                     readOnly = true,
                     label = { Text("Tipo de Hora Extra") },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTipo) },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    isError = state.tipoHoraExtraError != null,
+                    supportingText = state.tipoHoraExtraError?.let { { Text(it) } }
                 )
                 ExposedDropdownMenu(
                     expanded = expandedTipo,

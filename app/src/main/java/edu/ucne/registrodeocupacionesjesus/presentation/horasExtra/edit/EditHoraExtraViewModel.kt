@@ -15,6 +15,7 @@ import edu.ucne.registrodeocupacionesjesus.domain.horasExtra.usecase.calcularMon
 import edu.ucne.registrodeocupacionesjesus.domain.horasExtra.usecase.validateCantidadHoras
 import edu.ucne.registrodeocupacionesjesus.domain.horasExtra.usecase.validateEmpleadoId
 import edu.ucne.registrodeocupacionesjesus.domain.horasExtra.usecase.validateFechaHoraExtra
+import edu.ucne.registrodeocupacionesjesus.domain.horasExtra.usecase.validateTipoHoraExtra
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.usecase.ObserveOcupacionesUseCase
 import edu.ucne.registrodeocupacionesjesus.presentation.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,11 +68,11 @@ class EditHoraExtraViewModel @Inject constructor(
                 recalcularTotal()
             }
             is EditHoraExtraUiEvent.CantidadHorasChanged -> {
-                _state.update { it.copy(cantidadHoras = event.cantidad, cantidadHorasError = null ) }
+                _state.update { it.copy(cantidadHoras = event.cantidad, cantidadHorasError = null, tipoHoraExtraError = null ) }
                 recalcularTotal()
             }
             is EditHoraExtraUiEvent.TipoHoraExtraChanged -> {
-                _state.update { it.copy(tipoHoraExtra = event.tipo) }
+                _state.update { it.copy(tipoHoraExtra = event.tipo, tipoHoraExtraError = null, cantidadHorasError = null) }
                 recalcularTotal()
             }
             is EditHoraExtraUiEvent.FechaChanged ->{
@@ -130,13 +131,18 @@ class EditHoraExtraViewModel @Inject constructor(
             val empleadoResult = validateEmpleadoId(state.value.empleadoId)
             val fechaResult = validateFechaHoraExtra(state.value.fecha)
             val horasResult = validateCantidadHoras(state.value.cantidadHoras)
+            val tipoResult = validateTipoHoraExtra(
+                tipo = state.value.tipoHoraExtra.descripcion,
+                cantidad = state.value.cantidadHoras
+            )
 
-            if(!empleadoResult.isValid || !fechaResult.isValid || !horasResult.isValid){
+            if(!empleadoResult.isValid || !fechaResult.isValid || !horasResult.isValid || !tipoResult.isValid){
                 _state.update {
                     it.copy(
                         empleadoError = empleadoResult.error,
                         fechaError = fechaResult.error,
-                        cantidadHorasError = horasResult.error
+                        cantidadHorasError = horasResult.error,
+                        tipoHoraExtraError = tipoResult.error
                     )
                 }
                 return@launch
