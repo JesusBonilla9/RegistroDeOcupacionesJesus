@@ -20,25 +20,21 @@ fun validateCantidadHoras(cantidad: String): HoraExtraValidation {
         cantidad.isBlank() -> HoraExtraValidation(false, "La cantidad de horas no puede estar vacía")
         cantidad.toIntOrNull() == null -> HoraExtraValidation(false, "Debe ingresar una cantidad válida")
         cantidad.toInt() <= 0 -> HoraExtraValidation(false, "La cantidad de horas debe ser mayor que 0")
+        cantidad.toInt() > 80 -> HoraExtraValidation(false, "No puedes registrar mas de 80 horas en una semana")
         else -> HoraExtraValidation(true)
     }
 }
 
-fun validateTipoHoraExtra(tipo: String): HoraExtraValidation {
+fun validateTipoHoraExtra(tipo: String, cantidad: String): HoraExtraValidation {
+    val horas = cantidad.toIntOrNull() ?: 0
     return when {
         tipo.isBlank() -> HoraExtraValidation(false, "Debe seleccionar un tipo de hora extra")
+        horas > 24 && tipo != "ALTO VOLUMEN" ->
+            HoraExtraValidation(false, "Para más de 24 horas, el tipo debe ser 'ALTO VOLUMEN'")
         else -> HoraExtraValidation(true)
     }
 }
 
-fun validateRecargo(recargo: String): HoraExtraValidation {
-    return when {
-        recargo.isBlank() -> HoraExtraValidation(false, "El recargo no puede estar vacío")
-        recargo.toDoubleOrNull() == null -> HoraExtraValidation(false, "Debe ingresar un recargo válido")
-        recargo.toDouble() < 0.0 -> HoraExtraValidation(false, "El recargo no puede ser negativo")
-        else -> HoraExtraValidation(true)
-    }
-}
 
 fun validateFechaHoraExtra(fecha: LocalDate): HoraExtraValidation {
     val hoy = LocalDate.now()
