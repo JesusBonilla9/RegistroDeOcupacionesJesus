@@ -29,7 +29,7 @@ fun validateTipoHoraExtra(tipo: String, cantidad: String): HoraExtraValidation {
     val horas = cantidad.toIntOrNull() ?: 0
     return when {
         tipo.isBlank() -> HoraExtraValidation(false, "Debe seleccionar un tipo de hora extra")
-        horas > 24 && tipo != "ALTO VOLUMEN" ->
+        horas > 24 && (tipo != "ALTO VOLUMEN" && tipo != "ALTO_VOLUMEN") ->
             HoraExtraValidation(false, "Para más de 24 horas, el tipo debe ser 'ALTO VOLUMEN'")
         else -> HoraExtraValidation(true)
     }

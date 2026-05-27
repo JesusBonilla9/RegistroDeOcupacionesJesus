@@ -132,7 +132,7 @@ class EditHoraExtraViewModel @Inject constructor(
             val fechaResult = validateFechaHoraExtra(state.value.fecha)
             val horasResult = validateCantidadHoras(state.value.cantidadHoras)
             val tipoResult = validateTipoHoraExtra(
-                tipo = state.value.tipoHoraExtra.descripcion,
+                tipo = state.value.tipoHoraExtra.name,
                 cantidad = state.value.cantidadHoras
             )
 
