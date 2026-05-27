@@ -113,7 +113,6 @@ fun EditEmpleadoScreen(
                 singleLine = true
             )
 
-            // DROPDOWN OCUPACION
             ExposedDropdownMenuBox(
                 expanded = expandedOcupacion,
                 onExpandedChange = { expandedOcupacion = it }
@@ -152,7 +151,6 @@ fun EditEmpleadoScreen(
                 }
             }
 
-            // DROPDOWN SEXO
             ExposedDropdownMenuBox(
                 expanded = expandedSexo,
                 onExpandedChange = { expandedSexo = it }
@@ -230,7 +228,6 @@ fun EditEmpleadoScreen(
                 singleLine = true
             )
 
-            // DROPDOWN FRECUENCIA PAGO
             ExposedDropdownMenuBox(
                 expanded = expandedFrecuencia,
                 onExpandedChange = { expandedFrecuencia = it }
