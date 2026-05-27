@@ -3,11 +3,12 @@ package edu.ucne.registrodeocupacionesjesus.data.ocupaciones.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "Ocupaciones")
+@Entity(tableName = "ocupaciones")
 data class OcupacionEntity(
     @PrimaryKey(autoGenerate = true)
     val ocupacionId : Int = 0,
     val descripcion : String = "",
-    val sueldo : Double = 0.0
+    val sueldo : Double = 0.0,
+    val esPuestoDireccion: Boolean = false
 )
 

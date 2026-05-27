@@ -46,11 +46,18 @@ class EditOcupacionViewModel @Inject constructor(
             is EditOcupacionUiEvent.DescriptionChanged -> _state.update {
                 it.copy(descripcion = event.value, descripcionError = null)
             }
+
             is EditOcupacionUiEvent.SueldoChanged -> _state.update {
                 it.copy(sueldo = event.value, sueldoError = null)
             }
+
+            is EditOcupacionUiEvent.EsPuestoDireccionChanged -> _state.update {
+                it.copy(esPuestoDireccion = event.value)
+            }
+
             EditOcupacionUiEvent.Save -> onSave()
             EditOcupacionUiEvent.Delete -> onDelete()
+            EditOcupacionUiEvent.ClearError -> _state.update { it.copy(errorMessage = null) }
         }
     }
 
@@ -68,7 +75,8 @@ class EditOcupacionViewModel @Inject constructor(
                         isNew = false,
                         ocupacionId = ocupacion.ocupacionId,
                         descripcion = ocupacion.descripcion,
-                        sueldo = ocupacion.sueldo.toString()
+                        sueldo = ocupacion.sueldo.toString(),
+                        esPuestoDireccion = ocupacion.esPuestoDireccion
                     )
                 }
             } else {
@@ -81,6 +89,7 @@ class EditOcupacionViewModel @Inject constructor(
         viewModelScope.launch {
             val descripcion = state.value.descripcion
             val sueldo = state.value.sueldo
+            val esPuestoDireccion = state.value.esPuestoDireccion
 
             val descripcionesExistentes = observeOcupacionesUseCase().first()
                 .filter { it.ocupacionId != state.value.ocupacionId }
@@ -102,7 +111,8 @@ class EditOcupacionViewModel @Inject constructor(
                 val ocupacion = Ocupacion(
                     ocupacionId = state.value.ocupacionId ?: 0,
                     descripcion = descripcion,
-                    sueldo = sueldo.toDoubleOrNull() ?: 0.0
+                    sueldo = sueldo.toDoubleOrNull() ?: 0.0,
+                    esPuestoDireccion = esPuestoDireccion
                 )
 
                 val result = upsertOcupacionUseCase(ocupacion)
@@ -126,8 +136,17 @@ class EditOcupacionViewModel @Inject constructor(
         val id = state.value.ocupacionId ?: return
         viewModelScope.launch {
             _state.update { it.copy(isDeleting = true) }
-            deleteOcupacionUseCase(id)
-            _state.update { it.copy(isDeleting = false, deleted = true) }
+            try {
+                deleteOcupacionUseCase(id)
+                _state.update { it.copy(isDeleting = false, deleted = true) }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        isDeleting = false,
+                        errorMessage = "No se puede eliminar: hay empleados usando esta ocupación."
+                    )
+                }
+            }
         }
     }
 }

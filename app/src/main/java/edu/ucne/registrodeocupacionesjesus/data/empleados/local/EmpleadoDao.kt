@@ -8,21 +8,21 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EmpleadoDao {
     @Upsert
-    suspend fun upsert(entity: EmpleadoEntity)
+    suspend fun upsert(entity: EmpleadoEntity): Long
 
     @Delete
     suspend fun delete(entity: EmpleadoEntity)
 
-    @Query("Select * From Empleados ORDER BY empleadoId DESC")
+    @Query("Select * From empleados ORDER BY empleadoId DESC")
     fun observeAll(): Flow<List<EmpleadoEntity>>
 
-    @Query("Select * From Empleados WHERE empleadoId = :id")
+    @Query("Select * From empleados WHERE empleadoId = :id")
     suspend fun getById(id: Int): EmpleadoEntity?
 
-    @Query ("DELETE FROM Empleados WHERE empleadoId = :id")
+    @Query ("DELETE FROM empleados WHERE empleadoId = :id")
     suspend fun deleteById(id: Int)
 
-    @Query("Select exists(Select 1 From Empleados WHERE empleadoId = :id)")
+    @Query("Select exists(Select 1 From empleados WHERE empleadoId = :id)")
     suspend fun exists(id: Int): Boolean
 
 }

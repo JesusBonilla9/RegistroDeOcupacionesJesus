@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,13 +11,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -119,11 +116,13 @@ fun EmpleadoListBody(
                             items = state.empleados,
                             key = { it.empleadoId }
                         ) { empleado ->
+                            // Buscamos el nombre de la ocupación en la lista cargada
+                            val ocupacion = state.ocupaciones.find { it.ocupacionId == empleado.ocupacionId }
+                            val nombreOcupacion = ocupacion?.descripcion ?: "Sin asignar"
+
                             EmpleadoItem(
                                 empleado = empleado,
-                                onDelete = {
-                                    onEvent(EmpleadoListUiEvent.Delete(empleado.empleadoId))
-                                },
+                                ocupacionNombre = nombreOcupacion,
                                 onClick = {
                                     onEvent(EmpleadoListUiEvent.Edit(empleado.empleadoId))
                                 }
@@ -140,7 +139,7 @@ fun EmpleadoListBody(
 @Composable
 fun EmpleadoItem(
     empleado: Empleado,
-    onDelete: () -> Unit,
+    ocupacionNombre: String,
     onClick: () -> Unit
 ) {
     ElevatedCard(
@@ -149,43 +148,33 @@ fun EmpleadoItem(
             .testTag("empleado_item_${empleado.empleadoId}"),
         onClick = onClick
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = empleado.nombres,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+            Text(
+                text = empleado.nombres,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
 
-                Text(
-                    text = "Sexo: ${empleado.sexo} | Ingreso: ${empleado.fechaIngreso}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            Text(
+                text = "Ocupación: $ocupacionNombre",
+                style = MaterialTheme.typography.bodyMedium
+            )
 
-                Text(
-                    text = "Sueldo: RD$${empleado.sueldo}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
+            Text(
+                text = "Sexo: ${empleado.sexo} | Pago: ${empleado.frecuenciaPago.descripcion}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier.testTag("btn_delete_${empleado.empleadoId}")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar empleado"
-                )
-            }
+            Text(
+                text = "Ingreso: ${empleado.fechaIngreso} | RD$${empleado.sueldo}",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
     }
 }

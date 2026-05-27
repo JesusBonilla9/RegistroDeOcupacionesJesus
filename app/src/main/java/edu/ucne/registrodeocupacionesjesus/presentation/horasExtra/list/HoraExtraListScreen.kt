@@ -1,4 +1,4 @@
-package edu.ucne.registrodeocupacionesjesus.presentation.ocupaciones.list
+package edu.ucne.registrodeocupacionesjesus.presentation.horasExtra.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,19 +31,19 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.model.Ocupacion
+import edu.ucne.registrodeocupacionesjesus.domain.horasExtra.model.HoraExtra
 
 @Composable
-fun OcupacionListScreen(
-    viewModel: OcupacionListViewModel = hiltViewModel(),
-    onAddOcupacion: () -> Unit,
+fun HoraExtraListScreen(
+    viewModel: HoraExtraListViewModel = hiltViewModel(),
+    onAddHoraExtra: () -> Unit,
     onNavigateToEdit: (Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.navigateToCreate) {
         if (state.navigateToCreate) {
-            onAddOcupacion()
+            onAddHoraExtra()
         }
     }
 
@@ -53,22 +53,22 @@ fun OcupacionListScreen(
         }
     }
 
-    OcupacionListBody(state, viewModel::onEvent, onAddOcupacion)
+    HoraExtraListBody(state, viewModel::onEvent, onAddHoraExtra)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OcupacionListBody(
-    state: OcupacionListUiState,
-    onEvent: (OcupacionListUiEvent) -> Unit,
-    onAddOcupacion: () -> Unit
+fun HoraExtraListBody(
+    state: HoraExtraListUiState,
+    onEvent: (HoraExtraListUiEvent) -> Unit,
+    onAddHoraExtra: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(state.message) {
         state.message?.let { message ->
             snackbarHostState.showSnackbar(message)
-            onEvent(OcupacionListUiEvent.ClearMessage)
+            onEvent(HoraExtraListUiEvent.ClearMessage)
         }
     }
 
@@ -76,12 +76,12 @@ fun OcupacionListBody(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onAddOcupacion,
+                onClick = onAddHoraExtra,
                 modifier = Modifier.testTag("fab_add")
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Agregar ocupación"
+                    contentDescription = "Registrar Hora Extra"
                 )
             }
         }
@@ -98,9 +98,9 @@ fun OcupacionListBody(
                         .testTag("loading")
                 )
             } else {
-                if (state.ocupaciones.isEmpty()) {
+                if (state.horasExtra.isEmpty()) {
                     Text(
-                        text = "No hay ocupaciones registradas",
+                        text = "No hay horas extra registradas",
                         modifier = Modifier
                             .align(Alignment.Center)
                             .testTag("empty_message"),
@@ -113,13 +113,17 @@ fun OcupacionListBody(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(
-                            items = state.ocupaciones,
-                            key = { it.ocupacionId }
-                        ) { ocupacion ->
-                            OcupacionItem(
-                                ocupacion = ocupacion,
+                            items = state.horasExtra,
+                            key = { it.horaExtraId }
+                        ) { horaExtra ->
+                            val empleado = state.empleados.find { it.empleadoId == horaExtra.empleadoId }
+                            val nombreEmpleado = empleado?.nombres ?: "Empleado desconocido"
+
+                            HoraExtraItem(
+                                horaExtra = horaExtra,
+                                empleadoNombre = nombreEmpleado,
                                 onClick = {
-                                    onEvent(OcupacionListUiEvent.Edit(ocupacion.ocupacionId))
+                                    onEvent(HoraExtraListUiEvent.Edit(horaExtra.horaExtraId))
                                 }
                             )
                         }
@@ -132,14 +136,15 @@ fun OcupacionListBody(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OcupacionItem(
-    ocupacion: Ocupacion,
+fun HoraExtraItem(
+    horaExtra: HoraExtra,
+    empleadoNombre: String,
     onClick: () -> Unit
 ) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("ocupacion_item_${ocupacion.ocupacionId}"),
+            .testTag("horaExtra_item_${horaExtra.horaExtraId}"),
         onClick = onClick
     ) {
         Column(
@@ -148,24 +153,28 @@ fun OcupacionItem(
                 .padding(16.dp)
         ) {
             Text(
-                text = ocupacion.descripcion,
-                style = MaterialTheme.typography.bodyLarge,
+                text = empleadoNombre,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
 
             Text(
-                text = "Sueldo: RD$${ocupacion.sueldo}",
+                text = "${horaExtra.cantidadHoras} horas (${horaExtra.tipoHoraExtra.descripcion})",
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            if (ocupacion.esPuestoDireccion) {
-                Text(
-                    text = "Puesto de Dirección (No aplica horas extra)",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
+            Text(
+                text = "Fecha: ${horaExtra.fecha}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Text(
+                text = "Total a pagar: RD$${horaExtra.recargo}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
     }
 }
