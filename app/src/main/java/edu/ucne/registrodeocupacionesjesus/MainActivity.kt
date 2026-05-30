@@ -34,45 +34,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RegistroDeOcupacionesJesusTheme {
-                val navController = rememberNavController()
-                val items = listOf(
-                    TopLevelRoute("Empleado", Screen.EmpleadoList, Icons.Default.People),
-                    TopLevelRoute("Ocupacion", Screen.OcupacionList, Icons.Default.Work),
-                    TopLevelRoute("Horas Extra", Screen.HoraExtraList, Icons.Default.AccessTime)
-                )
-                Scaffold(
-                    bottomBar = {
-                        NavigationBar {
-                            val navBackStackEntry by navController.currentBackStackEntryAsState()
-                            val currentDestination = navBackStackEntry?.destination
-
-                            items.forEach { item ->
-                                NavigationBarItem(
-                                    icon = { Icon(item.icono, contentDescription = item.nombre) },
-                                    label = { Text(item.nombre) },
-                                    selected = currentDestination?.hierarchy?.any {
-                                        it.hasRoute(item.ruta::class)
-                                    } == true,
-                                    onClick = {
-                                        navController.navigate(item.ruta) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    },
-                    modifier = Modifier.fillMaxSize()
-                ) { innerPadding ->
-                    MainNavigationHost(
-                        navController = navController,
-                        innerPadding = innerPadding
-                    )
-                }
+               RegistroOcupacionesAppUI()
             }
         }
     }
