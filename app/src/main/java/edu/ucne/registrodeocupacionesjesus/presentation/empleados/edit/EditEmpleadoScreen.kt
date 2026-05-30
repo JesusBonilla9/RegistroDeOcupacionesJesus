@@ -50,7 +50,8 @@ import java.time.ZoneId
 @Composable
 fun EditEmpleadoScreen(
     viewModel: EditEmpleadoViewModel = hiltViewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    empleadoId: Int
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -62,6 +63,10 @@ fun EditEmpleadoScreen(
 
     var expandedOcupacion by remember { mutableStateOf(false) }
     var expandedFrecuencia by remember { mutableStateOf(false) }
+
+    LaunchedEffect(empleadoId) {
+        viewModel.loadEmpleado(empleadoId)
+    }
 
     LaunchedEffect(state.saved, state.deleted) {
         if (state.saved || state.deleted) {

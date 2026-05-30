@@ -4,7 +4,7 @@ import edu.ucne.registrodeocupacionesjesus.data.empleados.local.FrecuenciaPago
 import java.time.LocalDate
 
 sealed interface EditEmpleadoUiEvent {
-    data class Load(val id: Int?) : EditEmpleadoUiEvent
+    data class Load(val id: Int) : EditEmpleadoUiEvent
     data class NombresChanged(val value: String) : EditEmpleadoUiEvent
     data class SexoChanged(val value: String) : EditEmpleadoUiEvent
     data class FechaIngresoChanged(val value: LocalDate) : EditEmpleadoUiEvent

@@ -39,10 +39,15 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun EditOcupacionScreen(
     viewModel: EditOcupacionViewModel = hiltViewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    ocupacionId: Int
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    LaunchedEffect(ocupacionId) {
+        viewModel.loadOcupacion(ocupacionId)
+    }
 
     LaunchedEffect(state.saved, state.deleted) {
         if (state.saved || state.deleted) {
