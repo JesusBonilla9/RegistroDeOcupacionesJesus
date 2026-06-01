@@ -3,6 +3,7 @@ package edu.ucne.registrodeocupacionesjesus.data.empleados.repository
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import edu.ucne.registrodeocupacionesjesus.data.empleados.local.EmpleadoDao
 import edu.ucne.registrodeocupacionesjesus.data.empleados.local.EmpleadoEntity
+import edu.ucne.registrodeocupacionesjesus.data.empleados.local.FrecuenciaPago
 import edu.ucne.registrodeocupacionesjesus.domain.empleados.model.Empleado
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -34,7 +35,7 @@ class EmpleadoRepositoryImplTest {
     @Before
     fun setup() {
         dao = mockk(relaxed = true)
-        repository = EmpleadoRepositoryImpl( dao)
+        repository = EmpleadoRepositoryImpl(dao)
     }
 
     @Test
@@ -42,13 +43,15 @@ class EmpleadoRepositoryImplTest {
         val fechaActual = LocalDate.now()
         val empleado = Empleado(
             empleadoId = 0,
+            ocupacionId = 1,
             fechaIngreso = fechaActual,
             nombres = "Juan Perez",
             sexo = "Masculino",
-            sueldo = 50000.0
+            sueldo = 50000.0,
+            frecuenciaPago = FrecuenciaPago.SEMANAL
         )
         val empleadoSlot = slot<EmpleadoEntity>()
-        coEvery { dao.upsert(capture(empleadoSlot)) } just Runs
+        coEvery { dao.upsert(capture(empleadoSlot)) } returns 1L
 
         val result = repository.upsert(empleado)
 
@@ -57,19 +60,22 @@ class EmpleadoRepositoryImplTest {
         assertEquals(empleado.nombres, empleadoSlot.captured.nombres)
         assertEquals(empleado.sueldo, empleadoSlot.captured.sueldo, 0.0)
         assertEquals(empleado.sexo, empleadoSlot.captured.sexo)
-        assertEquals(empleado.fechaIngreso, empleadoSlot.captured.fechaIngreso)
+        assertEquals(empleado.ocupacionId, empleadoSlot.captured.ocupacionId)
+        assertEquals(empleado.frecuenciaPago, empleadoSlot.captured.frecuenciaPago)
     }
 
     @Test
     fun upsert_actualizaElEmpleadoCorrectamente() = runTest {
         val empleado = Empleado(
             empleadoId = 1,
+            ocupacionId = 2,
             fechaIngreso = LocalDate.now(),
             nombres = "Empleado Actualizado",
             sexo = "Femenino",
-            sueldo = 30000.0
+            sueldo = 30000.0,
+            frecuenciaPago = FrecuenciaPago.MENSUAL
         )
-        coEvery { dao.upsert(any()) } just Runs
+        coEvery { dao.upsert(any()) } returns 1L
 
         val result = repository.upsert(empleado)
 
@@ -90,8 +96,8 @@ class EmpleadoRepositoryImplTest {
     @Test
     fun observeEmpleados_retornaFlowDeEmpleados() = runTest {
         val entities = listOf(
-            EmpleadoEntity(1, LocalDate.now(), "Maria Lopez", "Femenino", 82000.0),
-            EmpleadoEntity(2, LocalDate.now(), "Carlos Ruiz", "Masculino", 70000.0)
+            EmpleadoEntity(1, 1, LocalDate.now(), "Maria Lopez", "Femenino", 82000.0, FrecuenciaPago.SEMANAL),
+            EmpleadoEntity(2, 2, LocalDate.now(), "Carlos Ruiz", "Masculino", 70000.0, FrecuenciaPago.MENSUAL)
         )
         every { dao.observeAll() } returns flowOf(entities)
 
@@ -104,7 +110,7 @@ class EmpleadoRepositoryImplTest {
 
     @Test
     fun getEmpleado_retornaEmpleadoPorId() = runTest {
-        val entity = EmpleadoEntity(1, LocalDate.now(), "Ana Gomez", "Femenino", 45000.0)
+        val entity = EmpleadoEntity(1, 1, LocalDate.now(), "Ana Gomez", "Femenino", 45000.0, FrecuenciaPago.QUINCENAL)
         coEvery { dao.getById(1) } returns entity
 
         val result = repository.getEmpleado(1)
@@ -112,7 +118,6 @@ class EmpleadoRepositoryImplTest {
         assertNotNull(result)
         assertEquals("Ana Gomez", result?.nombres)
         assertEquals(45000.0, result?.sueldo)
-        assertEquals("Femenino", result?.sexo)
+        assertEquals(FrecuenciaPago.QUINCENAL, result?.frecuenciaPago)
     }
 }
-

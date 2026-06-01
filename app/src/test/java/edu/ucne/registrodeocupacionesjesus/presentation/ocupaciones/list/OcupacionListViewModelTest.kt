@@ -40,14 +40,14 @@ class OcupacionListViewModelTest {
         every { observeOcupaciones() } returns shared
         coEvery { deleteOcupacion(5) } returns Unit
 
-        val vm = OcupacionListViewModel(observeOcupaciones, deleteOcupacion)
+        val viewModel = OcupacionListViewModel(observeOcupaciones, deleteOcupacion)
         runCurrent()
 
-        vm.onEvent(OcupacionListUiEvent.Delete(5))
+        viewModel.onEvent(OcupacionListUiEvent.Delete(5))
         runCurrent()
 
         coVerify { deleteOcupacion(5) }
-        assertEquals("Eliminado", vm.state.value.message)
+        assertEquals("Eliminado", viewModel.state.value.message)
     }
 
     @Test
@@ -55,13 +55,13 @@ class OcupacionListViewModelTest {
         val shared = MutableSharedFlow<List<Ocupacion>>(replay = 1)
         shared.emit(emptyList())
         every { observeOcupaciones() } returns shared
-        val vm = OcupacionListViewModel(observeOcupaciones, deleteOcupacion)
+        val viewModel = OcupacionListViewModel(observeOcupaciones, deleteOcupacion)
         runCurrent()
 
-        vm.onEvent(OcupacionListUiEvent.CreateNew)
-        assertTrue(vm.state.value.navigateToCreate)
+        viewModel.onEvent(OcupacionListUiEvent.CreateNew)
+        assertTrue(viewModel.state.value.navigateToCreate)
 
-        vm.onEvent(OcupacionListUiEvent.Edit(10))
-        assertEquals(10, vm.state.value.navigateToEditId)
+        viewModel.onEvent(OcupacionListUiEvent.Edit(10))
+        assertEquals(10, viewModel.state.value.navigateToEditId)
     }
 }
