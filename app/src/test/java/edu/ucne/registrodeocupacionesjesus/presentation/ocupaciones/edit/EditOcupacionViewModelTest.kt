@@ -58,14 +58,14 @@ class EditOcupacionViewModelTest {
     @Test
     fun cargar_conIdNuloOCeroEstableceEstadoNuevo() = runTest(dispatcher) {
         val savedStateHandle = SavedStateHandle(mapOf("ocupacionId" to 0))
-        val vm = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
+        val viewModel = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
 
-        vm.onEvent(EditOcupacionUiEvent.Load(0))
+        viewModel.onEvent(EditOcupacionUiEvent.Load(0))
         runCurrent()
 
-        val s = vm.state.value
-        assertTrue(s.isNew)
-        assertNull(s.ocupacionId)
+        val currentState = viewModel.state.value
+        assertTrue(currentState.isNew)
+        assertNull(currentState.ocupacionId)
     }
 
     @Test
@@ -73,55 +73,58 @@ class EditOcupacionViewModelTest {
         coEvery { getOcupacion(7) } returns Ocupacion(
             ocupacionId = 7,
             descripcion = "Desarrollador de Software",
-            sueldo = 75000.0
+            sueldo = 75000.0,
+            esPuestoDireccion = true
         )
 
         val savedStateHandle = SavedStateHandle(mapOf("ocupacionId" to 7))
-        val vm = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
+        val viewModel = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
 
-        vm.onEvent(EditOcupacionUiEvent.Load(7))
+        viewModel.onEvent(EditOcupacionUiEvent.Load(7))
         runCurrent()
 
-        val s = vm.state.value
-        assertFalse(s.isNew)
-        assertEquals(7, s.ocupacionId)
-        assertEquals("Desarrollador de Software", s.descripcion)
-        assertEquals("75000.0", s.sueldo)
+        val currentState = viewModel.state.value
+        assertFalse(currentState.isNew)
+        assertEquals(7, currentState.ocupacionId)
+        assertEquals("Desarrollador de Software", currentState.descripcion)
+        assertEquals("75000.0", currentState.sueldo)
+        assertEquals(true, currentState.esPuestoDireccion)
     }
 
     @Test
     fun guardar_conEntradasInvalidasEstableceErroresYNoGuarda() = runTest(dispatcher) {
         val savedStateHandle = SavedStateHandle(mapOf("ocupacionId" to 0))
-        val vm = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
+        val viewModel = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
 
-        vm.onEvent(EditOcupacionUiEvent.DescriptionChanged(""))
-        vm.onEvent(EditOcupacionUiEvent.SueldoChanged("abc"))
+        viewModel.onEvent(EditOcupacionUiEvent.DescriptionChanged(""))
+        viewModel.onEvent(EditOcupacionUiEvent.SueldoChanged("abc"))
 
-        vm.onEvent(EditOcupacionUiEvent.Save)
+        viewModel.onEvent(EditOcupacionUiEvent.Save)
         runCurrent()
 
-        val s = vm.state.value
-        assertNotNull(s.descripcionError)
-        assertNotNull(s.sueldoError)
-        assertFalse(s.saved)
+        val currentState = viewModel.state.value
+        assertNotNull(currentState.descripcionError)
+        assertNotNull(currentState.sueldoError)
+        assertFalse(currentState.saved)
     }
 
     @Test
     fun guardar_conEntradasValidasLlamaUpsertYEstableceGuardado() = runTest(dispatcher) {
         coEvery { upsertOcupacion(any()) } returns Result.success(123)
         val savedStateHandle = SavedStateHandle(mapOf("ocupacionId" to 0))
-        val vm = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
+        val viewModel = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
 
-        vm.onEvent(EditOcupacionUiEvent.DescriptionChanged("Ingeniero de Datos"))
-        vm.onEvent(EditOcupacionUiEvent.SueldoChanged("80000.0"))
+        viewModel.onEvent(EditOcupacionUiEvent.DescriptionChanged("Ingeniero de Datos"))
+        viewModel.onEvent(EditOcupacionUiEvent.SueldoChanged("80000.0"))
+        viewModel.onEvent(EditOcupacionUiEvent.EsPuestoDireccionChanged(false))
 
-        vm.onEvent(EditOcupacionUiEvent.Save)
+        viewModel.onEvent(EditOcupacionUiEvent.Save)
         runCurrent()
 
-        val s = vm.state.value
-        assertFalse(s.isSaving)
-        assertTrue(s.saved)
-        assertEquals(123, s.ocupacionId)
+        val currentState = viewModel.state.value
+        assertFalse(currentState.isSaving)
+        assertTrue(currentState.saved)
+        assertEquals(123, currentState.ocupacionId)
     }
 
     @Test
@@ -134,17 +137,17 @@ class EditOcupacionViewModelTest {
         )
 
         val savedStateHandle = SavedStateHandle(mapOf("ocupacionId" to 9))
-        val vm = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
+        val viewModel = EditOcupacionViewModel(getOcupacion, upsertOcupacion, deleteOcupacion, observeOcupaciones, savedStateHandle)
 
-        vm.onEvent(EditOcupacionUiEvent.Load(9))
+        viewModel.onEvent(EditOcupacionUiEvent.Load(9))
         runCurrent()
 
-        vm.onEvent(EditOcupacionUiEvent.Delete)
+        viewModel.onEvent(EditOcupacionUiEvent.Delete)
         runCurrent()
 
         coVerify { deleteOcupacion(9) }
-        val s = vm.state.value
-        assertFalse(s.isDeleting)
-        assertTrue(s.deleted)
+        val currentState = viewModel.state.value
+        assertFalse(currentState.isDeleting)
+        assertTrue(currentState.deleted)
     }
 }

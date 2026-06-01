@@ -52,7 +52,8 @@ import java.time.ZoneId
 @Composable
 fun EditHoraExtraScreen(
     viewModel: EditHoraExtraViewModel = hiltViewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    horaExtraId: Int
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -61,6 +62,10 @@ fun EditHoraExtraScreen(
 
     var expandedEmpleado by remember { mutableStateOf(false) }
     var expandedTipo by remember { mutableStateOf(false) }
+
+    LaunchedEffect(horaExtraId) {
+        viewModel.loadHoraExtra(horaExtraId)
+    }
 
     LaunchedEffect(state.saved, state.deleted) {
         if (state.saved || state.deleted) {

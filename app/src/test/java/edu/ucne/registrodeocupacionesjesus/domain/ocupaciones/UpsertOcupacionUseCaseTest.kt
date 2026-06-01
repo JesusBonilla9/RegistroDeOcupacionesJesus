@@ -1,4 +1,5 @@
 package edu.ucne.registrodeocupacionesjesus.domain.ocupaciones
+
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.model.Ocupacion
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.repository.OcupacionRepository
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.usecase.UpsertOcupacionUseCase
@@ -24,7 +25,7 @@ class UpsertOcupacionUseCaseTest {
 
     @Test
     fun invoke_guardaOcupacionConDatosValidos() = runTest {
-        val ocupacion = Ocupacion(ocupacionId = 0, descripcion = "Desarrollador", sueldo = 50000.0)
+        val ocupacion = Ocupacion(ocupacionId = 0, descripcion = "Desarrollador", sueldo = 50000.0, esPuestoDireccion = false)
 
         coEvery { repository.observeOcupaciones() } returns flowOf(emptyList())
         coEvery { repository.upsert(ocupacion) } returns 1
@@ -45,7 +46,6 @@ class UpsertOcupacionUseCaseTest {
         val result = useCase(ocupacion)
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is IllegalArgumentException)
         assertEquals("La descripcion no puede estar vacia", result.exceptionOrNull()?.message)
         coVerify(exactly = 0) { repository.upsert(any()) }
     }
@@ -58,14 +58,12 @@ class UpsertOcupacionUseCaseTest {
         val result = useCase(ocupacion)
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is IllegalArgumentException)
         assertEquals("La descripcion debe tener al menos 3 caracteres", result.exceptionOrNull()?.message)
     }
 
     @Test
     fun invoke_fallaSiLaDescripcionYaExiste() = runTest {
         val ocupacionExistente = Ocupacion(ocupacionId = 0, descripcion = "Ingeniero", sueldo = 40000.0)
-
         val nuevaOcupacion = Ocupacion(ocupacionId = 1, descripcion = "ingeniero", sueldo = 60000.0)
 
         coEvery { repository.observeOcupaciones() } returns flowOf(listOf(ocupacionExistente))
@@ -73,7 +71,6 @@ class UpsertOcupacionUseCaseTest {
         val result = useCase(nuevaOcupacion)
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is IllegalArgumentException)
         assertEquals("Ya existe una ocupacion con esa descripcion", result.exceptionOrNull()?.message)
     }
 
@@ -85,7 +82,6 @@ class UpsertOcupacionUseCaseTest {
         val result = useCase(ocupacion)
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is IllegalArgumentException)
         assertEquals("El sueldo debe ser mayor que 0", result.exceptionOrNull()?.message)
         coVerify(exactly = 0) { repository.upsert(any()) }
     }

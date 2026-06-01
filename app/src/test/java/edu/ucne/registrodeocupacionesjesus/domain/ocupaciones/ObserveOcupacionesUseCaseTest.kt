@@ -1,4 +1,5 @@
 package edu.ucne.registrodeocupacionesjesus.domain.ocupaciones
+
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.model.Ocupacion
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.repository.OcupacionRepository
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.usecase.ObserveOcupacionesUseCase
@@ -28,8 +29,8 @@ class ObserveOcupacionesUseCaseTest {
     @Test
     fun invoke_llamaAlRepositorioYRetornaUnFlujoConLaListaDeOcupaciones() = runTest {
         val listaEsperada = listOf(
-            Ocupacion(ocupacionId = 1, descripcion = "Desarrollador", sueldo = 50000.0),
-            Ocupacion(ocupacionId = 2, descripcion = "Medico", sueldo = 80000.0)
+            Ocupacion(ocupacionId = 1, descripcion = "Desarrollador", sueldo = 50000.0, esPuestoDireccion = false),
+            Ocupacion(ocupacionId = 2, descripcion = "Medico", sueldo = 80000.0, esPuestoDireccion = true)
         )
         coEvery { repository.observeOcupaciones() } returns flowOf(listaEsperada)
 

@@ -1,4 +1,5 @@
 package edu.ucne.registrodeocupacionesjesus.domain.ocupaciones
+
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.model.Ocupacion
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.repository.OcupacionRepository
 import edu.ucne.registrodeocupacionesjesus.domain.ocupaciones.usecase.GetOcupacionUseCase
@@ -27,7 +28,7 @@ class GetOcupacionUseCaseTest {
     @Test
     fun invoke_llamaAlRepositorioYRetornaLaOcupacionCorrespondienteAlId() = runTest {
         val ocupacionId = 1
-        val ocupacionEsperada = Ocupacion(ocupacionId = ocupacionId, descripcion = "Medico", sueldo = 80000.0)
+        val ocupacionEsperada = Ocupacion(ocupacionId = ocupacionId, descripcion = "Medico", sueldo = 80000.0, esPuestoDireccion = true)
 
         coEvery { repository.getOcupacion(ocupacionId) } returns ocupacionEsperada
 

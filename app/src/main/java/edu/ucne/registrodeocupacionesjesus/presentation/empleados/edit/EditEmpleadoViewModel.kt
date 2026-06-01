@@ -41,7 +41,6 @@ class EditEmpleadoViewModel @Inject constructor(
 
     init {
         loadOcupaciones()
-        loadEmpleado(empleadoId)
     }
 
     private fun loadOcupaciones() {
@@ -78,11 +77,12 @@ class EditEmpleadoViewModel @Inject constructor(
         }
     }
 
-    private fun loadEmpleado(id: Int?) {
-        if (id == null || id == 0) {
-            _state.update { it.copy(isNew = true, empleadoId = null) }
-            return
-        }
+     fun loadEmpleado(id: Int) {
+         if( id == 0 ){
+             val ocupaciones = _state.value.ocupaciones
+             _state.value = EditEmpleadoUiState(ocupaciones = ocupaciones)
+             return
+         }
 
         viewModelScope.launch {
             val empleado = getEmpleadoUseCase(id)

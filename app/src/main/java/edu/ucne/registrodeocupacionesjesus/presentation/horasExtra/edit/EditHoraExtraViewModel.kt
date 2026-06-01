@@ -42,7 +42,6 @@ class EditHoraExtraViewModel @Inject constructor(
     init {
         loadEmpleados()
         loadOcupaciones()
-        loadHoraExtra(horaExtraId)
     }
     private fun loadEmpleados(){
         viewModelScope.launch {
@@ -102,11 +101,16 @@ class EditHoraExtraViewModel @Inject constructor(
         )
         _state.update { it.copy(recargo = nuevoRecargo, esPuestoDireccion = esDireccion) }
     }
-    private fun loadHoraExtra(id: Int?){
-        if(id == null || id == 0){
-            _state.update { it.copy(isNew = true, horaExtraId = null) }
-            return
-        }
+     fun loadHoraExtra(id: Int){
+         if(id == 0 ){
+             val empleados = _state.value.empleados
+             val ocupaciones = _state.value.ocupaciones
+             _state.value = EditHoraExtraUiState(
+                 empleados = empleados,
+                 ocupaciones = ocupaciones
+             )
+             return
+         }
         viewModelScope.launch {
             val horaExtra = getHoraExtraUseCase(id)
             if(horaExtra != null){
@@ -158,8 +162,15 @@ class EditHoraExtraViewModel @Inject constructor(
                 recargo = state.value.recargo,
                 esPuestoDireccion = state.value.esPuestoDireccion
             )
-            upsertHoraExtraUseCase(horaExtra).onSuccess {
-                _state.update { it.copy(isSaving = false, saved = true) }
+            upsertHoraExtraUseCase(horaExtra).onSuccess { newId ->
+                _state.update {
+                    it.copy(
+                        isSaving = false,
+                        saved = true,
+                        horaExtraId = newId,
+                        isNew = false
+                    )
+                }
             }.onFailure {
                 _state.update { it.copy(isSaving = false) }
             }

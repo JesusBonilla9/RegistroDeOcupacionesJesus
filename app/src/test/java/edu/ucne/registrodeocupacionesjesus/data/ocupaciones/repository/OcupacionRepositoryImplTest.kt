@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.flowOf
 import junit.framework.TestCase.assertNotNull
 
 @ExperimentalCoroutinesApi
-class OcupacionRepositoryImplTest{
+class OcupacionRepositoryImplTest {
     @get: Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
@@ -30,7 +30,7 @@ class OcupacionRepositoryImplTest{
     private lateinit var dao: OcupacionDao
 
     @Before
-    fun setup(){
+    fun setup() {
         dao = mockk(relaxed = true)
         repository = OcupacionRepositoryImpl(dao)
     }
@@ -40,10 +40,11 @@ class OcupacionRepositoryImplTest{
         val ocupacion = Ocupacion(
             ocupacionId = 0,
             descripcion = "Ingeniero en Sistemas",
-            sueldo = 50000.0
+            sueldo = 50000.0,
+            esPuestoDireccion = true
         )
         val ocupacionSlot = slot<OcupacionEntity>()
-        coEvery { dao.upsert(capture(ocupacionSlot)) } just Runs
+        coEvery { dao.upsert(capture(ocupacionSlot)) } returns 1L
 
         val result = repository.upsert(ocupacion)
 
@@ -51,48 +52,52 @@ class OcupacionRepositoryImplTest{
         coVerify { dao.upsert(any()) }
         assertEquals(ocupacion.descripcion, ocupacionSlot.captured.descripcion)
         assertEquals(ocupacion.sueldo, ocupacionSlot.captured.sueldo)
+        assertEquals(ocupacion.esPuestoDireccion, ocupacionSlot.captured.esPuestoDireccion)
     }
 
     @Test
     fun upsert_actualizaLaOcupacionCorrectamente() = runTest {
-        val ocupacion = Ocupacion(ocupacionId = 1, descripcion = "Ocupacion actualizada", sueldo = 30000.0)
-        coEvery { dao.upsert(any()) } just Runs
+        val ocupacion = Ocupacion(ocupacionId = 1, descripcion = "Ocupacion actualizada", sueldo = 30000.0, esPuestoDireccion = false)
+        coEvery { dao.upsert(any()) } returns 1L
 
         val result = repository.upsert(ocupacion)
 
         assertEquals(1, result)
         coVerify { dao.upsert(any()) }
     }
+
     @Test
-    fun delete_eliminaLaOcupacionCorrectamente() = runTest{
+    fun delete_eliminaLaOcupacionCorrectamente() = runTest {
         val ocupacionId = 1
         coEvery { dao.deleteById(ocupacionId) } just Runs
 
         repository.delete(ocupacionId)
         coVerify { dao.deleteById(ocupacionId) }
     }
+
     @Test
-    fun observeOcupaciones_retornaFlowDeOcupaciones() = runTest{
+    fun observeOcupaciones_retornaFlowDeOcupaciones() = runTest {
         val entities = listOf(
-            OcupacionEntity(1, "Doctor", 82000.0),
-            OcupacionEntity(2, "Arquitecto", 70000.0)
+            OcupacionEntity(1, "Doctor", 82000.0, true),
+            OcupacionEntity(2, "Arquitecto", 70000.0, false)
         )
         every { dao.observeAll() } returns flowOf(entities)
         val result = repository.observeOcupaciones().first()
 
-        assertEquals(2,result.size)
+        assertEquals(2, result.size)
         assertEquals("Doctor", result[0].descripcion)
-        assertEquals("Arquitecto", result[1].descripcion)
+        assertEquals(true, result[0].esPuestoDireccion)
     }
+
     @Test
     fun getOcupacion_retornaOcupacionPorId() = runTest {
-        val entity = OcupacionEntity(1, "Enfermera", 10000.0)
+        val entity = OcupacionEntity(1, "Enfermera", 10000.0, false)
         coEvery { dao.getById(1) } returns entity
 
         val result = repository.getOcupacion(1)
 
         assertNotNull(result)
         assertEquals("Enfermera", result?.descripcion)
-        assertEquals(10000.0, result?.sueldo)
+        assertEquals(false, result?.esPuestoDireccion)
     }
 }

@@ -1,5 +1,6 @@
 package edu.ucne.registrodeocupacionesjesus.domain.empleados
 
+import edu.ucne.registrodeocupacionesjesus.data.empleados.local.FrecuenciaPago
 import edu.ucne.registrodeocupacionesjesus.domain.empleados.model.Empleado
 import edu.ucne.registrodeocupacionesjesus.domain.empleados.repository.EmpleadoRepository
 import edu.ucne.registrodeocupacionesjesus.domain.empleados.usecase.GetEmpleadoUseCase
@@ -28,14 +29,15 @@ class GetEmpleadoUseCaseTest {
 
     @Test
     fun invoke_llamaAlRepositorioYRetornaElEmpleadoCorrespondienteAlId() = runTest {
-
         val empleadoId = 1
         val empleadoEsperado = Empleado(
             empleadoId = empleadoId,
+            ocupacionId = 1,
             nombres = "Maria Santos",
             sueldo = 65000.0,
             fechaIngreso = LocalDate.now(),
-            sexo = "Femenino"
+            sexo = "Femenino",
+            frecuenciaPago = FrecuenciaPago.MENSUAL
         )
 
         coEvery { repository.getEmpleado(empleadoId) } returns empleadoEsperado
@@ -48,7 +50,6 @@ class GetEmpleadoUseCaseTest {
 
     @Test
     fun invoke_retornaNullSiElIdNoExisteEnElRepositorio() = runTest {
-
         val idInexistente = 99
         coEvery { repository.getEmpleado(idInexistente) } returns null
 

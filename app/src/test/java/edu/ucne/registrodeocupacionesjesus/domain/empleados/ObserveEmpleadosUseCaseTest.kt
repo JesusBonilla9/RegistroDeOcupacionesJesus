@@ -1,5 +1,6 @@
 package edu.ucne.registrodeocupacionesjesus.domain.empleados
 
+import edu.ucne.registrodeocupacionesjesus.data.empleados.local.FrecuenciaPago
 import edu.ucne.registrodeocupacionesjesus.domain.empleados.model.Empleado
 import edu.ucne.registrodeocupacionesjesus.domain.empleados.repository.EmpleadoRepository
 import edu.ucne.registrodeocupacionesjesus.domain.empleados.usecase.ObserveEmpleadosUseCase
@@ -32,17 +33,21 @@ class ObserveEmpleadosUseCaseTest {
         val listaEsperada = listOf(
             Empleado(
                 empleadoId = 1,
+                ocupacionId = 1,
                 nombres = "Juan Perez",
                 sexo = "Masculino",
                 fechaIngreso = LocalDate.of(2023, 5, 10),
-                sueldo = 50000.0
+                sueldo = 50000.0,
+                frecuenciaPago = FrecuenciaPago.SEMANAL
             ),
             Empleado(
                 empleadoId = 2,
+                ocupacionId = 2,
                 nombres = "Maria Lopez",
                 sexo = "Femenino",
                 fechaIngreso = LocalDate.of(2024, 1, 15),
-                sueldo = 80000.0
+                sueldo = 80000.0,
+                frecuenciaPago = FrecuenciaPago.MENSUAL
             )
         )
         coEvery { repository.observeEmpleados() } returns flowOf(listaEsperada)
