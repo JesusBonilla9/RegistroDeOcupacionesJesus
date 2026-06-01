@@ -162,8 +162,15 @@ class EditHoraExtraViewModel @Inject constructor(
                 recargo = state.value.recargo,
                 esPuestoDireccion = state.value.esPuestoDireccion
             )
-            upsertHoraExtraUseCase(horaExtra).onSuccess {
-                _state.update { it.copy(isSaving = false, saved = true) }
+            upsertHoraExtraUseCase(horaExtra).onSuccess { newId ->
+                _state.update {
+                    it.copy(
+                        isSaving = false,
+                        saved = true,
+                        horaExtraId = newId,
+                        isNew = false
+                    )
+                }
             }.onFailure {
                 _state.update { it.copy(isSaving = false) }
             }
